@@ -1,5 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
+using RecordShop.Repositories;
+using RecordShop.Services;
 
 namespace RecordShop
 {
@@ -12,6 +14,8 @@ namespace RecordShop
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
+            builder.Services.AddScoped<IAlbumService, AlbumService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
