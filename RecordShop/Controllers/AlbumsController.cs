@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RecordShop.Models;
 using RecordShop.Services;
 
 namespace RecordShop.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AlbumsController : ControllerBase
     {
         private readonly IAlbumService _albumService;
@@ -16,9 +15,16 @@ namespace RecordShop.Controllers
         }
 
         [HttpGet]
-        public IActionResult<Album> GetAllAlbums()
+        public IActionResult GetAllAlbums()
         {
+            var albums = _albumService.GetAllAlbums();
 
+            if (albums == null || !albums.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(albums);
         }
     }
 }

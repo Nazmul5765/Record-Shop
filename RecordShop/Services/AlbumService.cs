@@ -14,7 +14,7 @@ namespace RecordShop.Services
 
         public IEnumerable<Album> GetAllAlbums()
         {
-            return;
+            return _albumRepository.GetAllAlbums();
         }
     }
 }

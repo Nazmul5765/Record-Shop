@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using RecordShop.Data;
 using RecordShop.Repositories;
 using RecordShop.Services;
 
