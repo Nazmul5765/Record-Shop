@@ -66,4 +66,16 @@ public class AlbumServiceTests
 
         result.ShouldBe(testAlbums);
     }
+
+    [Test]
+    public void GetAllAlbums_ReturnsEmptyList_WhenNoAlbumsExists()
+    {
+        List<Album> emptyAlbums = new List<Album>();
+
+        _albumRepositoryMock.Setup(repo => repo.GetAllAlbums()).Returns(emptyAlbums);
+
+        var result = _albumService.GetAllAlbums();
+
+        result.ShouldBe(emptyAlbums);
+    }
 }
