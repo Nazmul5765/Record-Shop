@@ -1,4 +1,6 @@
 
+using Microsoft.EntityFrameworkCore;
+
 namespace RecordShop
 {
     public class Program
@@ -13,6 +15,17 @@ namespace RecordShop
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            if (builder.Configuration.GetValue<bool>("UseInMemoryDatabase"))
+            {
+                builder.Services.AddDbContext<RecordShopDbContext>(options =>
+                    options.UseInMemoryDatabase("RecordShopDb"));
+            }
+            else
+            {
+                builder.Services.AddDbContext<RecordShopDbContext>(options =>
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            }
 
             var app = builder.Build();
 
