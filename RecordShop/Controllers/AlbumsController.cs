@@ -26,5 +26,24 @@ namespace RecordShop.Controllers
 
             return Ok(albums);
         }
+
+        [HttpGet("{id}")]
+        public IActionResult GetAlbumById(int id)
+        {
+
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var album = _albumService.GetAlbumById(id);
+
+            if (album == null)
+            {
+                return NotFound();
+            }
+            
+                return Ok(album);         
+        }
     }
 }
