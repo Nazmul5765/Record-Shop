@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RecordShop.Models;
 using RecordShop.Services;
 
 namespace RecordShop.Controllers
@@ -44,6 +45,25 @@ namespace RecordShop.Controllers
             }
             
                 return Ok(album);         
+        }
+
+        [HttpPost]
+        public IActionResult AddAlbum(Album album)
+        {
+            if (album == null)
+            {
+                return BadRequest();
+            }
+            if (string.IsNullOrWhiteSpace(album.Title) || string.IsNullOrWhiteSpace(album.Artist) ||
+            String.IsNullOrWhiteSpace(album.Genre))
+            {
+                return BadRequest();
+            }
+            else
+            {
+                var addAlbum = _albumService.AddAlbum(album);
+                return Created($"/api/Album/{album.Id}", addAlbum);
+            }
         }
     }
 }

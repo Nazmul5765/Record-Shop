@@ -22,5 +22,15 @@ namespace RecordShop.Repositories
 
             return album.FirstOrDefault(a => a.Id == id);
         }
+
+        public Album AddAlbum(Album album)
+        {
+            var addAlbum = _recordShopDbContext.Albums;
+
+            addAlbum.Add(album);
+
+            _recordShopDbContext.SaveChanges();
+            return album;
+        }
     }
 }

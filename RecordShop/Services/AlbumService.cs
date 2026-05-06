@@ -21,5 +21,10 @@ namespace RecordShop.Services
         {
             return _albumRepository.GetAlbumById(id);
         }
+
+        public Album AddAlbum(Album album)
+        {
+            return _albumRepository.AddAlbum(album);
+        }
     }
 }
