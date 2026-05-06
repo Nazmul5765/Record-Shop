@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using Shouldly;
+﻿using Shouldly;
 using Moq;
 using RecordShop.Repositories;
 using RecordShop.Services;
@@ -77,5 +76,92 @@ public class AlbumServiceTests
         var result = _albumService.GetAllAlbums();
 
         result.ShouldBe(emptyAlbums);
+    }
+
+    [Test]
+    public void GetAlbumById_ReturnsAlbumWithInputtedId_WhenAlbumDoesExistWithCorrectId()
+    {
+        List<Album> testAlbums = new List<Album>
+        {
+        new Album
+        {
+            Id = 1,
+            Title = "Thriller",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 10
+        },
+
+        new Album
+        {
+            Id = 2,
+            Title = "Back in Black",
+            Artist = "AC/DC",
+            Genre = "Rock",
+            ReleaseYear = 1980,
+            Price = 8.99m,
+            StockQuantity = 5
+        },
+
+        new Album
+        {
+            Id = 3,
+            Title = "21",
+            Artist = "Adele",
+            Genre = "Soul",
+            ReleaseYear = 2011,
+            Price = 10.99m,
+            StockQuantity = 7
+        }
+
+        };
+
+        _albumRepositoryMock.Setup(repo => repo.GetAlbumById(2)).Returns(testAlbums[1]);
+
+        var result = _albumService.GetAlbumById(2);
+
+        _albumRepositoryMock.Verify(repo => repo.GetAlbumById(2),Times.Once());
+
+        result.ShouldNotBeNull();
+        result.Id.ShouldBe(2);
+    }
+
+    [Test]
+    public void GetAlbumById_ReturnsNullWithInvalidId_WhenAlbumIdDoesNotExist()
+    {
+        List<Album> testAlbums = new List<Album>
+        {
+        new Album
+        {
+            Id = 1,
+            Title = "Thriller",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 10
+        },
+
+        new Album
+        {
+            Id = 2,
+            Title = "Back in Black",
+            Artist = "AC/DC",
+            Genre = "Rock",
+            ReleaseYear = 1980,
+            Price = 8.99m,
+            StockQuantity = 5
+        }
+
+        };
+
+        _albumRepositoryMock.Setup(repo => repo.GetAlbumById(3)).Returns((Album)null);
+
+        var result = _albumService.GetAlbumById(3);
+
+
+        result.ShouldBeNull();
     }
 }
