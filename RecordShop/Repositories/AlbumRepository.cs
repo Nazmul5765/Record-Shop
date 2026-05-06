@@ -15,5 +15,12 @@ namespace RecordShop.Repositories
         {
             return _recordShopDbContext.Albums; 
         }
+
+        public Album GetAlbumById(int id)
+        {
+            var album = _recordShopDbContext.Albums;
+
+            return album.FirstOrDefault(a => a.Id == id);
+        }
     }
 }
