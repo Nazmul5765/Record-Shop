@@ -164,4 +164,83 @@ public class AlbumServiceTests
 
         result.ShouldBeNull();
     }
+
+    [Test]
+    public void AddAlbum_AddNewAlbum_WhenAlbumIsValid()
+    {
+        List<Album> testAlbums = new List<Album>
+        {
+        new Album
+        {
+            Id = 1,
+            Title = "Thriller",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 10
+        },
+
+        new Album
+        {
+            Id = 2,
+            Title = "Back in Black",
+            Artist = "AC/DC",
+            Genre = "Rock",
+            ReleaseYear = 1980,
+            Price = 8.99m,
+            StockQuantity = 5
+        } 
+        
+        };
+
+        var newAlbum = new Album
+        {
+            Id = 3,
+            Title = "21",
+            Artist = "Adele",
+            Genre = "Soul",
+            ReleaseYear = 2011,
+            Price = 10.99m,
+            StockQuantity = 7
+        };
+
+        testAlbums.Add(newAlbum);
+
+        _albumRepositoryMock.Setup(repo => repo.AddAlbum(newAlbum)).Returns(testAlbums[2]);
+
+        var result = _albumService.AddAlbum(newAlbum);
+
+        _albumRepositoryMock.Verify(repo => repo.AddAlbum(newAlbum), Times.Once());
+
+        result.ShouldNotBeNull();
+        result.Id.ShouldBe(3);
+    }
+
+    [Test]
+    public void AddAlbum_PassesCorrectAlbumToRepository_WhenAlbumIsValid()
+    {
+
+        var newAlbum = new Album
+        {
+            Id = 3,
+            Title = "21",
+            Artist = "Adele",
+            Genre = "Soul",
+            ReleaseYear = 2011,
+            Price = 10.99m,
+            StockQuantity = 7
+        };
+
+        var result = _albumService.AddAlbum(newAlbum);
+
+        _albumRepositoryMock.Verify(repo => repo.AddAlbum(
+        It.Is<Album>(a =>
+        a.Id == 3 &&
+        a.Title == "21" &&
+        a.Artist == "Adele" &&
+        a.Genre == "Soul"
+    )), Times.Once());
+    }
+
 }
