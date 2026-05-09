@@ -43,8 +43,8 @@ namespace RecordShop.Controllers
             {
                 return NotFound();
             }
-            
-                return Ok(album);         
+
+            return Ok(album);
         }
 
         [HttpPost]
@@ -64,6 +64,53 @@ namespace RecordShop.Controllers
                 var addAlbum = _albumService.AddAlbum(album);
                 return Created($"/api/Album/{album.Id}", addAlbum);
             }
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateAlbum(int id, Album updateAlbum)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+            if (updateAlbum == null)
+            {
+                return BadRequest();
+            }
+            if (string.IsNullOrWhiteSpace(updateAlbum.Title) || string.IsNullOrWhiteSpace(updateAlbum.Artist) ||
+            String.IsNullOrWhiteSpace(updateAlbum.Genre))
+            {
+                return BadRequest();
+            }
+
+
+            var updatedAlbum = _albumService.UpdateAlbum(id, updateAlbum);
+
+            if (updatedAlbum == null)
+            {
+                return NotFound();
+            }
+            return Ok(updatedAlbum);
+
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteAlbum(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+
+            var deletedAlbum = _albumService.DeleteAlbum(id);
+
+            if (deletedAlbum == null)
+            {
+                return NotFound();
+            }
+            return NoContent();
+
         }
     }
 }

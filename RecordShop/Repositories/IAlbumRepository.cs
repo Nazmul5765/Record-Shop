@@ -8,5 +8,9 @@ namespace RecordShop.Repositories
         Album GetAlbumById(int id);
 
         Album AddAlbum(Album album);
+
+        Album UpdateAlbum(int id, Album updateAlbum);
+
+        Album DeleteAlbum(int id);
     }
 }
