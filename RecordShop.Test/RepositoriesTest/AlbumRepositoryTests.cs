@@ -307,5 +307,318 @@ public class AlbumRepositoryTests
 
     }
 
+    [Test]
+    public void UpdateAlbum_ReturnsUpdatedAlbum_WhenAlbumExists()
+    {
+        {
+            var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            var context = new RecordShopDbContext(options);
+
+            context.Albums.Add(
+                new Album
+                {
+                    Id = 1,
+                    Title = "Thriller",
+                    Artist = "Michael Jackson",
+                    Genre = "Pop",
+                    ReleaseYear = 1982,
+                    Price = 9.99m,
+                    StockQuantity = 10
+                }
+
+            );
+
+            context.SaveChanges();
+
+            var repo = new AlbumRepository(context);
+
+            var updatedAlbum = new Album
+            {
+                Title = "Thriller1",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 15
+            };
+
+            int id = 1;
+            var result = repo.UpdateAlbum(id, updatedAlbum);
+
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe(1);
+        }
+    }
+
+    [Test]
+    public void UpdateAlbum_UpdatesAlbumDetails_WhenAlbumExists()
+    {
+        {
+            var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            var context = new RecordShopDbContext(options);
+
+            context.Albums.Add(
+                new Album
+                {
+                    Id = 1,
+                    Title = "Thriller",
+                    Artist = "Michael Jackson",
+                    Genre = "Pop",
+                    ReleaseYear = 1982,
+                    Price = 9.99m,
+                    StockQuantity = 10
+                }
+
+            );
+
+            context.SaveChanges();
+
+            var repo = new AlbumRepository(context);
+
+            var updatedAlbum = new Album
+            {
+                Title = "Thriller1",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 10.00m,
+                StockQuantity = 15
+            };
+
+            int id = 1;
+            var result = repo.UpdateAlbum(id, updatedAlbum);
+
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe(1);
+            result.Title.ShouldBe("Thriller1");
+            result.Artist.ShouldBe("Michael Jackson");
+            result.Genre.ShouldBe("Pop");
+            result.ReleaseYear.ShouldBe(1982);
+            result.Price.ShouldBe(10.00m);
+            result.StockQuantity.ShouldBe(15);
+        }
+    }
+
+    [Test]
+    public void UpdateAlbum_ReturnsNull_WhenAlbumDoesNotExist()
+    {
+        {
+            var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            var context = new RecordShopDbContext(options);
+
+            context.Albums.Add(
+                new Album
+                {
+                    Id = 1,
+                    Title = "Thriller",
+                    Artist = "Michael Jackson",
+                    Genre = "Pop",
+                    ReleaseYear = 1982,
+                    Price = 9.99m,
+                    StockQuantity = 10
+                }
+
+            );
+
+            context.SaveChanges();
+
+            var repo = new AlbumRepository(context);
+
+            var updatedAlbum = new Album
+            {
+                Title = "Thriller1",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 10.00m,
+                StockQuantity = 15
+            };
+
+            int id = 2;
+            var result = repo.UpdateAlbum(id, updatedAlbum);
+
+            result.ShouldBeNull();
+        }
+    }
+
+    [Test]
+    public void UpdateAlbum_DoesNotChangeAlbumCount_WhenAlbumIsUpdated()
+    {
+        {
+            var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            var context = new RecordShopDbContext(options);
+
+            context.Albums.Add(
+                new Album
+                {
+                    Id = 1,
+                    Title = "Thriller",
+                    Artist = "Michael Jackson",
+                    Genre = "Pop",
+                    ReleaseYear = 1982,
+                    Price = 9.99m,
+                    StockQuantity = 10
+                }
+            );
+
+            context.SaveChanges();
+
+            var repo = new AlbumRepository(context);
+
+            var updatedAlbum = new Album
+            {
+                Title = "Thriller1",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 10.00m,
+                StockQuantity = 15
+            };
+
+            int id = 1;
+            var result = repo.UpdateAlbum(id, updatedAlbum);
+
+            result.ShouldNotBeNull();
+            context.Albums.Count().ShouldBe(1);
+        }
+    }
+
+    [Test]
+    public void DeleteAlbum_ReturnsDeletedAlbum_WhenAlbumExists()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+        .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+        .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.AddRange(
+            new Album
+            {
+                Id = 1,
+                Title = "Thriller",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 10
+            },
+
+            new Album
+            {
+                Id = 2,
+                Title = "Back in Black",
+                Artist = "AC/DC",
+                Genre = "Rock",
+                ReleaseYear = 1980,
+                Price = 8.99m,
+                StockQuantity = 5
+            }
+
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+        var result = repo.DeleteAlbum(2);
+
+        result.Id.ShouldBe(2);
+    }
+
+    [Test]
+    public void DeleteAlbum_RemovesAlbumFromDatabase_WhenAlbumExists()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+        .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+        .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.AddRange(
+            new Album
+            {
+                Id = 1,
+                Title = "Thriller",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 10
+            },
+
+            new Album
+            {
+                Id = 2,
+                Title = "Back in Black",
+                Artist = "AC/DC",
+                Genre = "Rock",
+                ReleaseYear = 1980,
+                Price = 8.99m,
+                StockQuantity = 5
+            }
+
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+        var result = repo.DeleteAlbum(2);
+
+        context.Albums.Count().ShouldBe(1);
+    }
+
+    [Test]
+    public void DeleteAlbum_ReturnsNull_WhenAlbumDoesNotExist()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+        .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+        .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.AddRange(
+            new Album
+            {
+                Id = 1,
+                Title = "Thriller",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 10
+            },
+
+            new Album
+            {
+                Id = 2,
+                Title = "Back in Black",
+                Artist = "AC/DC",
+                Genre = "Rock",
+                ReleaseYear = 1980,
+                Price = 8.99m,
+                StockQuantity = 5
+            }
+
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+        var result = repo.DeleteAlbum(3);
+
+        result.ShouldBeNull();
+    }
 }
 

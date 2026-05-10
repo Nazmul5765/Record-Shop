@@ -244,3 +244,14 @@ public class AlbumServiceTests
     }
 
 }
+
+//UpdateAlbum_ReturnsUpdatedAlbum_WhenAlbumExists
+//UpdateAlbum_CallsRepositoryUpdateAlbum_Once
+//UpdateAlbum_PassesCorrectIdAndAlbumToRepository
+//UpdateAlbum_ReturnsNull_WhenAlbumDoesNotExist
+
+
+//DeleteAlbum_ReturnsDeletedAlbum_WhenAlbumExists
+//DeleteAlbum_CallsRepositoryDeleteAlbum_Once
+//DeleteAlbum_PassesCorrectIdToRepository
+//DeleteAlbum_ReturnsNull_WhenAlbumDoesNotExist
