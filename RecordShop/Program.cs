@@ -21,16 +21,16 @@ namespace RecordShop
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            if (builder.Configuration.GetValue<bool>("UseInMemoryDatabase"))
-            {
-                builder.Services.AddDbContext<RecordShopDbContext>(options =>
-                    options.UseInMemoryDatabase("RecordShopDb"));
-            }
-            else
-            {
+            //if (builder.Configuration.GetValue<bool>("UseInMemoryDatabase"))
+            //{
+            //    builder.Services.AddDbContext<RecordShopDbContext>(options =>
+            //        options.UseInMemoryDatabase("RecordShopDb"));
+            //}
+            //else
+            //{
                 builder.Services.AddDbContext<RecordShopDbContext>(options =>
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            }
+            //}
 
             var app = builder.Build();
 

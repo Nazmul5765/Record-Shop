@@ -9,6 +9,7 @@ namespace RecordShop.Data
         public RecordShopDbContext(DbContextOptions<RecordShopDbContext> options)
             : base(options) { }
 
-
+        protected override void OnModelCreating(ModelBuilder modelBuilder) 
+        { modelBuilder.Entity<Album>().Property(a => a.Price).HasPrecision(18, 2); }
     }
 }
