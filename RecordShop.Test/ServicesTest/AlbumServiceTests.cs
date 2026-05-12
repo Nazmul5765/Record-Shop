@@ -1,8 +1,10 @@
-﻿using Shouldly;
+﻿using Microsoft.EntityFrameworkCore;
 using Moq;
+using RecordShop.Data;
+using RecordShop.Models;
 using RecordShop.Repositories;
 using RecordShop.Services;
-using RecordShop.Models;
+using Shouldly;
 
 namespace RecordShop.Test;
 
@@ -220,7 +222,6 @@ public class AlbumServiceTests
     [Test]
     public void AddAlbum_PassesCorrectAlbumToRepository_WhenAlbumIsValid()
     {
-
         var newAlbum = new Album
         {
             Id = 3,
@@ -243,12 +244,147 @@ public class AlbumServiceTests
     )), Times.Once());
     }
 
+    [Test]
+    public void UpdateAlbum_ReturnsUpdatedAlbum_WhenAlbumExists()
+    {
+        
+            List<Album> testAlbums = new List<Album>
+        {
+        new Album
+        {
+            Id = 1,
+            Title = "Thriller",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 10
+        },
+
+        new Album
+        {
+            Id = 2,
+            Title = "Back in Black",
+            Artist = "AC/DC",
+            Genre = "Rock",
+            ReleaseYear = 1980,
+            Price = 8.99m,
+            StockQuantity = 5
+        }
+
+        };
+
+            var updatedAlbum = new Album
+            {
+                Title = "Thriller1",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 15
+            };
+
+            _albumRepositoryMock.Setup(repo => repo.UpdateAlbum(1, updatedAlbum)).Returns(testAlbums[0]);
+
+            var result = _albumService.UpdateAlbum(1, updatedAlbum);
+
+
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe(1);
+        
+    }
+
+    [Test]
+    public void UpdateAlbum_CallsRepositoryUpdateAlbum_Once()
+    {
+            var updatedAlbum = new Album
+            {
+                Title = "Thriller1",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 15
+            };
+
+            var result = _albumService.UpdateAlbum(1, updatedAlbum);
+
+            _albumRepositoryMock.Verify(repo => repo.UpdateAlbum(1, updatedAlbum), Times.Once());
+    }
+
+    [Test]
+    public void UpdateAlbum_PassesCorrectIdAndAlbumToRepository()
+    {
+        
+            List<Album> testAlbums = new List<Album>
+        {
+        new Album
+        {
+            Id = 1,
+            Title = "Thriller",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 10
+        },
+
+        new Album
+        {
+            Id = 2,
+            Title = "Back in Black",
+            Artist = "AC/DC",
+            Genre = "Rock",
+            ReleaseYear = 1980,
+            Price = 8.99m,
+            StockQuantity = 5
+        }};
+
+            var updatedAlbum = new Album
+            {
+                Title = "Thriller1",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 15
+            };
+
+            var result = _albumService.UpdateAlbum(1, updatedAlbum);
+
+        _albumRepositoryMock.Verify(repo => repo.UpdateAlbum(1,
+        It.Is<Album>(a =>
+        a.Title == "Thriller1" &&
+        a.Artist == "Michael Jackson" &&
+        a.Genre == "Pop" &&
+        a.ReleaseYear == 1982 &&
+        a.Price == 9.99m &&
+        a.StockQuantity == 15
+        )), Times.Once());
+    }
+
+    [Test]
+    public void UpdateAlbum_ReturnsNull_WhenAlbumDoesNotExist()
+    {
+        var updatedAlbum = new Album
+        {
+            Title = "Thriller1",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 15
+        };
+
+        _albumRepositoryMock.Setup(repo => repo.UpdateAlbum(1, updatedAlbum)).Returns((Album) null);
+
+        var result = _albumService.UpdateAlbum(1, updatedAlbum);
+
+
+        result.ShouldBeNull();
+    }
 }
 
-//UpdateAlbum_ReturnsUpdatedAlbum_WhenAlbumExists
-//UpdateAlbum_CallsRepositoryUpdateAlbum_Once
-//UpdateAlbum_PassesCorrectIdAndAlbumToRepository
-//UpdateAlbum_ReturnsNull_WhenAlbumDoesNotExist
 
 
 //DeleteAlbum_ReturnsDeletedAlbum_WhenAlbumExists
