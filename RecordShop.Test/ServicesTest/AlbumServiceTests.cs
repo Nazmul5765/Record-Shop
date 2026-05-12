@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Moq;
-using RecordShop.Data;
+﻿using Moq;
 using RecordShop.Models;
 using RecordShop.Repositories;
 using RecordShop.Services;
@@ -380,14 +378,70 @@ public class AlbumServiceTests
 
         var result = _albumService.UpdateAlbum(1, updatedAlbum);
 
+        result.ShouldBeNull();
+    }
+
+    [Test]
+    public void DeleteAlbum_ReturnsDeletedAlbum_WhenAlbumExists()
+    {
+        List<Album> newAlbum = new List<Album>
+        {
+
+        new Album
+        {
+            Id = 1,
+            Title = "Thriller",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 10
+        },
+
+        new Album
+        {
+            Id = 2,
+            Title = "Back in Black",
+            Artist = "AC/DC",
+            Genre = "Rock",
+            ReleaseYear = 1980,
+            Price = 8.99m,
+            StockQuantity = 5
+        }};
+
+
+        _albumRepositoryMock.Setup(repo => repo.DeleteAlbum(2)).Returns(newAlbum[1]);
+
+        var result = _albumService.DeleteAlbum(2);
+
+        result.ShouldNotBeNull();
+        result.Id.ShouldBe(2);
+    }
+
+    [Test]
+    public void DeleteAlbum_CallsRepositoryDeleteAlbum_Once()
+    {
+        var deletedAlbum = _albumService.DeleteAlbum(1);
+
+        _albumRepositoryMock.Verify(repo => repo.DeleteAlbum(1), Times.Once());
+    }
+
+    [Test]
+    public void DeleteAlbum_PassesCorrectIdToRepository()
+    {
+
+        var result = _albumService.DeleteAlbum(1);
+
+        _albumRepositoryMock.Verify(repo => repo.DeleteAlbum(1), Times.Once());
+    }
+
+    [Test]
+    public void DeleteAlbum_ReturnsNull_WhenAlbumDoesNotExist()
+    {
+        _albumRepositoryMock.Setup(repo => repo.DeleteAlbum(1)).Returns((Album?)null);
+
+        var result = _albumService.DeleteAlbum(1);
 
         result.ShouldBeNull();
     }
 }
-
-
-
-//DeleteAlbum_ReturnsDeletedAlbum_WhenAlbumExists
-//DeleteAlbum_CallsRepositoryDeleteAlbum_Once
-//DeleteAlbum_PassesCorrectIdToRepository
-//DeleteAlbum_ReturnsNull_WhenAlbumDoesNotExist
