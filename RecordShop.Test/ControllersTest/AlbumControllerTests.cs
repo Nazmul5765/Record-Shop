@@ -541,13 +541,80 @@ public class AlbumControllerTests
 
         result.ShouldBeOfType<NotFoundResult>();
     }
+
+    [Test]
+    public void DeleteAlbum_ReturnsNoContent_WhenAlbumIsDeleted()
+    {
+        List<Album> testAlbums = new List<Album>
+            {
+            new Album
+            {
+                Id = 1,
+                Title = "Thriller",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 10
+            },
+
+            new Album
+            {
+                Id = 2,
+                Title = "Back in Black",
+                Artist = "AC/DC",
+                Genre = "Rock",
+                ReleaseYear = 1980,
+                Price = 8.99m,
+                StockQuantity = 5
+            } };
+
+        _albumServiceMock.Setup(service => service.DeleteAlbum(1)).Returns(testAlbums[0]);
+
+        var result = _albumController.DeleteAlbum(1);
+        result.ShouldBeOfType<NoContentResult>();
+    }
+
+    [Test]
+    public void DeleteAlbum_ReturnsBadRequest_WhenIdIsZero()
+    {
+        var result = _albumController.DeleteAlbum(0);
+        result.ShouldBeOfType<BadRequestResult>();
+    }
+
+    [Test]
+    public void DeleteAlbum_ReturnsBadRequest_WhenIdIsNegative()
+    {
+        var result = _albumController.DeleteAlbum(-5);
+        result.ShouldBeOfType<BadRequestResult>();
+    }
+
+    [Test]
+    public void DeleteAlbum_ReturnsNotFound_WhenAlbumDoesNotExist()
+    {
+
+        _albumServiceMock.Setup(service => service.DeleteAlbum(999)).Returns((Album)null);
+        var result = _albumController.DeleteAlbum(999);
+        result.ShouldBeOfType<NotFoundResult>();
+    }
+
+    [Test]
+    public void DeleteAlbum_DoesNotCallService_WhenIdIsInvalid()
+    {
+
+
+        var result = _albumController.DeleteAlbum(-1);
+
+        _albumServiceMock.Verify(service => service.DeleteAlbum(It.IsAny<int>()), Times.Never());
+        result.ShouldBeOfType<BadRequestResult>();
+    }
 }
 
 
 
-//DeleteAlbum_ReturnsNoContent_WhenAlbumIsDeleted
-//DeleteAlbum_ReturnsBadRequest_WhenIdIsZero
-//DeleteAlbum_ReturnsBadRequest_WhenIdIsNegative
-//DeleteAlbum_ReturnsNotFound_WhenAlbumDoesNotExist
-//DeleteAlbum_DoesNotCallService_WhenIdIsInvalid
+//
+//
+//
+//
+//
 
