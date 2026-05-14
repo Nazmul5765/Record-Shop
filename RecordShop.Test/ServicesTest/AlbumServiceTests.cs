@@ -246,7 +246,7 @@ public class AlbumServiceTests
     public void UpdateAlbum_ReturnsUpdatedAlbum_WhenAlbumExists()
     {
         
-            List<Album> testAlbums = new List<Album>
+    List<Album> testAlbums = new List<Album>
         {
         new Album
         {

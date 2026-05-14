@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Moq;
 using RecordShop.Controllers;
 using RecordShop.Models;
 using RecordShop.Services;
 using Shouldly;
+using System.Runtime.CompilerServices;
 namespace RecordShop.Test;
 
 public class AlbumControllerTests
@@ -308,9 +310,244 @@ public class AlbumControllerTests
         _albumServiceMock.Verify(repo => repo.AddAlbum(newAlbum), Times.Never());
 
     }
+
+    [Test]
+    public void UpdateAlbum_ReturnsOk_WhenAlbumIsUpdated()
+    {
+        List<Album> testAlbums = new List<Album>
+        {
+        new Album
+        {
+            Id = 1,
+            Title = "Thriller",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 10
+        },
+
+        new Album
+        {
+            Id = 2,
+            Title = "Back in Black",
+            Artist = "AC/DC",
+            Genre = "Rock",
+            ReleaseYear = 1980,
+            Price = 8.99m,
+            StockQuantity = 5
+        }
+
+        };
+
+        var updatedAlbum = new Album
+        {
+            Title = "Thriller1",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 15
+        };
+
+        _albumServiceMock.Setup(repo => repo.UpdateAlbum(1, updatedAlbum)).Returns(testAlbums[0]);
+
+        IActionResult result = _albumController.UpdateAlbum(1, updatedAlbum);
+
+
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<OkObjectResult>();
+    }
+
+    [Test]
+    public void UpdateAlbum_ReturnsUpdatedAlbum_WhenAlbumIsUpdated()
+    {
+
+
+         List<Album> testAlbums = new List<Album>
+            {
+            new Album
+            {
+                Id = 1,
+                Title = "Thriller",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 10
+            },
+
+            new Album
+            {
+                Id = 2,
+                Title = "Back in Black",
+                Artist = "AC/DC",
+                Genre = "Rock",
+                ReleaseYear = 1980,
+                Price = 8.99m,
+                StockQuantity = 5
+            }
+
+            };
+
+            var updatedAlbum = new Album
+            {
+                Title = "Thriller1",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 15
+            };
+
+            _albumServiceMock.Setup(repo => repo.UpdateAlbum(1, updatedAlbum)).Returns(updatedAlbum);
+
+            var result = _albumController.UpdateAlbum(1, updatedAlbum);
+
+            var albumReturnOk = result as OkObjectResult;
+
+            var album = albumReturnOk.Value as Album;
+
+
+            album.Title.ShouldBe("Thriller1");
+            album.Artist.ShouldBe("Michael Jackson");
+            album.Genre.ShouldBe("Pop");
+            album.ReleaseYear.ShouldBe(1982);
+            album.Price.ShouldBe(9.99m);
+            album.StockQuantity.ShouldBe(15);
+        
+    }
+
+    [Test]
+    public void UpdateAlbum_ReturnsBadRequest_WhenIdIsZero()
+    {
+            var updatedAlbum = new Album
+            {
+                Title = "Thriller1",
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 15
+            };
+
+            var result = _albumController.UpdateAlbum(0, updatedAlbum);
+
+            result.ShouldBeOfType<BadRequestResult>();
+        
+    }
+
+    [Test]
+    public void UpdateAlbum_ReturnsBadRequest_WhenIdIsNegative()
+    {
+        var updatedAlbum = new Album
+        {
+            Title = "Thriller1",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 15
+        };
+
+        var result = _albumController.UpdateAlbum(-2, updatedAlbum);
+
+        result.ShouldBeOfType<BadRequestResult>();
+
+    }
+
+    [Test]
+    public void UpdateAlbum_ReturnsBadRequest_WhenAlbumIsNull()
+    {
+
+        var result = _albumController.UpdateAlbum(1, (Album)null);
+
+        result.ShouldBeOfType<BadRequestResult>();
+
+    }
+
+    [Test]
+    public void UpdateAlbum_ReturnsBadRequest_WhenTitleIsMissing()
+    {
+            var updatedAlbum = new Album
+            {
+                
+                Artist = "Michael Jackson",
+                Genre = "Pop",
+                ReleaseYear = 1982,
+                Price = 9.99m,
+                StockQuantity = 15
+            };
+
+            var result = _albumController.UpdateAlbum(1, updatedAlbum);
+
+            result.ShouldBeOfType<BadRequestResult>();
+    }
+
+    [Test]
+    public void UpdateAlbum_ReturnsBadRequest_WhenArtistIsMissing()
+    {
+        var updatedAlbum = new Album
+        {
+
+            Title = "Thiller1",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 15
+        };
+
+        var result = _albumController.UpdateAlbum(1, updatedAlbum);
+
+        result.ShouldBeOfType<BadRequestResult>();
+    }
+
+    [Test]
+    public void UpdateAlbum_ReturnsBadRequest_WhenGenreIsMissing()
+    {
+        var updatedAlbum = new Album
+        {
+
+            Title = "Thiller1",
+            Artist = "Michael Jackson",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 15
+        };
+
+        var result = _albumController.UpdateAlbum(1, updatedAlbum);
+
+        result.ShouldBeOfType<BadRequestResult>();
+    }
+
+
+    [Test]
+    public void UpdateAlbum_ReturnsNotFound_WhenAlbumDoesNotExist()
+    {
+        var updatedAlbum = new Album
+        {
+
+            Title = "Thiller1",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 15
+        };
+
+        _albumServiceMock.Setup(service => service.UpdateAlbum(999, updatedAlbum)).Returns((Album)null);
+
+        var result = _albumController.UpdateAlbum(999, updatedAlbum);
+
+        result.ShouldBeOfType<NotFoundResult>();
+    }
 }
 
 
 
-
+//DeleteAlbum_ReturnsNoContent_WhenAlbumIsDeleted
+//DeleteAlbum_ReturnsBadRequest_WhenIdIsZero
+//DeleteAlbum_ReturnsBadRequest_WhenIdIsNegative
+//DeleteAlbum_ReturnsNotFound_WhenAlbumDoesNotExist
+//DeleteAlbum_DoesNotCallService_WhenIdIsInvalid
 
