@@ -9,5 +9,6 @@ namespace RecordShop.Services
         Album AddAlbum(Album album);
         Album UpdateAlbum(int id, Album updateAlbum);
         Album DeleteAlbum(int id);
+        Album GetAlbumByAlbumName(string albumName);
     }
 }

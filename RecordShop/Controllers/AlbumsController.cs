@@ -112,5 +112,23 @@ namespace RecordShop.Controllers
             return NoContent();
 
         }
+
+        [HttpGet("title/{title}")]
+        public IActionResult GetAlbumByAlbumName(string title)
+        {
+
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                return BadRequest();
+            }
+            var album = _albumService.GetAlbumByAlbumName(title);
+
+            if (album == null)
+            {
+                return NotFound();
+            }
+            return Ok(album);
+
+        }
     }
 }

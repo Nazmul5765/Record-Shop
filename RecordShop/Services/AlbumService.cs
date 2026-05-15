@@ -36,5 +36,10 @@ namespace RecordShop.Services
         {
             return _albumRepository.DeleteAlbum(id);
         }
+
+        public Album GetAlbumByAlbumName(string albumName)
+        {
+            return _albumRepository.GetAlbumByAlbumName(albumName);
+        }
     }
 }

@@ -71,5 +71,12 @@ namespace RecordShop.Repositories
 
             return deleteAlbum;
         }
+
+        public Album GetAlbumByAlbumName(string albumName)
+        {
+            var album = _recordShopDbContext.Albums;
+
+            return album.FirstOrDefault(name => name.Title == albumName);
+        }
     }
 }
