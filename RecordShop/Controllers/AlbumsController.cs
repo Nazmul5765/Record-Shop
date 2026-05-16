@@ -22,7 +22,7 @@ namespace RecordShop.Controllers
 
             if (albums == null || !albums.Any())
             {
-                return NotFound();
+                return NotFound("No albums were found.");
             }
 
             return Ok(albums);
@@ -34,14 +34,14 @@ namespace RecordShop.Controllers
 
             if (id <= 0)
             {
-                return BadRequest();
+                return BadRequest("Album id must be greater than zero");
             }
 
             var album = _albumService.GetAlbumById(id);
 
             if (album == null)
             {
-                return NotFound();
+                return NotFound($"Album with id {id} was not found");
             }
 
             return Ok(album);
@@ -52,12 +52,12 @@ namespace RecordShop.Controllers
         {
             if (album == null)
             {
-                return BadRequest();
+                return BadRequest("Album data is required.");
             }
             if (string.IsNullOrWhiteSpace(album.Title) || string.IsNullOrWhiteSpace(album.Artist) ||
             String.IsNullOrWhiteSpace(album.Genre))
             {
-                return BadRequest();
+                return BadRequest("Title, Artist and Genre is required");
             }
             else
             {
@@ -71,16 +71,16 @@ namespace RecordShop.Controllers
         {
             if (id <= 0)
             {
-                return BadRequest();
+                return BadRequest("Album id must be greater than zero.");
             }
             if (updateAlbum == null)
             {
-                return BadRequest();
+                return BadRequest("Updated album data is required.");
             }
             if (string.IsNullOrWhiteSpace(updateAlbum.Title) || string.IsNullOrWhiteSpace(updateAlbum.Artist) ||
             String.IsNullOrWhiteSpace(updateAlbum.Genre))
             {
-                return BadRequest();
+                return BadRequest("Updated Album: Title, Artist and Genre is required");
             }
 
 
@@ -88,7 +88,7 @@ namespace RecordShop.Controllers
 
             if (updatedAlbum == null)
             {
-                return NotFound();
+                return NotFound($"Album with id {id} was not found.");
             }
             return Ok(updatedAlbum);
 
@@ -99,7 +99,7 @@ namespace RecordShop.Controllers
         {
             if (id <= 0)
             {
-                return BadRequest();
+                return BadRequest("Album id must be greater than zero.");
             }
 
 
@@ -107,7 +107,7 @@ namespace RecordShop.Controllers
 
             if (deletedAlbum == null)
             {
-                return NotFound();
+                return NotFound($"Album with id {id} was not found.");
             }
             return NoContent();
 
@@ -119,15 +119,15 @@ namespace RecordShop.Controllers
 
             if (string.IsNullOrWhiteSpace(title))
             {
-                return BadRequest();
+                return BadRequest("Album title is required");
             }
             var album = _albumService.GetAlbumByAlbumName(title);
 
             if (album == null)
             {
-                return NotFound();
+                return NotFound($"Album with title {title} was not found.");
             }
-            return Ok(album);
+            return Ok(album); 
 
         }
 
@@ -136,13 +136,13 @@ namespace RecordShop.Controllers
         {
             if (string.IsNullOrWhiteSpace(artistName))
             {
-                return BadRequest();
+                return BadRequest("Artist Name is required");
             }
             var album = _albumService.GetAlbumsByArtist(artistName);
 
             if (!album.Any())
             {
-                return NotFound();
+                return NotFound($"No albums found for artist {artistName}.");
             }
             return Ok(album);
         }
@@ -152,13 +152,13 @@ namespace RecordShop.Controllers
         {
             if (string.IsNullOrWhiteSpace(genre))
             {
-                return BadRequest();
+                return BadRequest("Genre is required");
             }
             var album = _albumService.GetAlbumsByGenre(genre);
 
             if (!album.Any())
             {
-                return NotFound();
+                return NotFound($"No albums found for genre {genre}.");
             }
             return Ok(album);
         }
@@ -168,13 +168,13 @@ namespace RecordShop.Controllers
         {
             if (releaseYear <= 0)
             {
-                return BadRequest();
+                return BadRequest("release year must be greater than zero.");
             }
             var album = _albumService.GetAlbumsByReleaseYear(releaseYear);
 
             if (!album.Any())
             {
-                return NotFound();
+                return NotFound($"No albums found for with the release year {releaseYear}.");
             }
             return Ok(album);
         }
