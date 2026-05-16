@@ -78,5 +78,27 @@ namespace RecordShop.Repositories
 
             return album.FirstOrDefault(name => name.Title == albumName);
         }
+
+        public IEnumerable<Album> GetAlbumsByArtist(string artistName)
+        {
+            var album = _recordShopDbContext.Albums;
+
+            return album.Where(artist => artist.Artist == artistName);
+        }
+
+        public IEnumerable<Album> GetAlbumsByGenre(string genre)
+        {
+            var album = _recordShopDbContext.Albums;
+
+            return album.Where(gen => gen.Genre == genre);
+        }
+
+        public IEnumerable<Album> GetAlbumsByReleaseYear(int releaseYear)
+        {
+            var album = _recordShopDbContext.Albums;
+
+            return album.Where(year => year.ReleaseYear == releaseYear);
+        }
+
     }
 }

@@ -130,5 +130,53 @@ namespace RecordShop.Controllers
             return Ok(album);
 
         }
+
+        [HttpGet("artist/{artistName}")]
+        public IActionResult GetAlbumsByArtist(string artistName)
+        {
+            if (string.IsNullOrWhiteSpace(artistName))
+            {
+                return BadRequest();
+            }
+            var album = _albumService.GetAlbumsByArtist(artistName);
+
+            if (!album.Any())
+            {
+                return NotFound();
+            }
+            return Ok(album);
+        }
+
+        [HttpGet("genre/{genre}")]
+        public IActionResult GetAlbumsByGenre(string genre)
+        {
+            if (string.IsNullOrWhiteSpace(genre))
+            {
+                return BadRequest();
+            }
+            var album = _albumService.GetAlbumsByGenre(genre);
+
+            if (!album.Any())
+            {
+                return NotFound();
+            }
+            return Ok(album);
+        }
+
+        [HttpGet("releaseYear/{releaseYear}")]
+        public IActionResult GetAlbumsByReleaseYear(int releaseYear)
+        {
+            if (releaseYear <= 0)
+            {
+                return BadRequest();
+            }
+            var album = _albumService.GetAlbumsByReleaseYear(releaseYear);
+
+            if (!album.Any())
+            {
+                return NotFound();
+            }
+            return Ok(album);
+        }
     }
 }

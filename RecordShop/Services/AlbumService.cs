@@ -41,5 +41,21 @@ namespace RecordShop.Services
         {
             return _albumRepository.GetAlbumByAlbumName(albumName);
         }
+
+        public IEnumerable<Album> GetAlbumsByArtist(string artistName)
+        {
+            return _albumRepository.GetAlbumsByArtist(artistName);
+        }
+
+        public IEnumerable<Album> GetAlbumsByGenre(string genre)
+        {
+            return _albumRepository.GetAlbumsByGenre(genre);
+        }
+
+        public IEnumerable<Album> GetAlbumsByReleaseYear(int releaseYear)
+        {
+            return _albumRepository.GetAlbumsByReleaseYear(releaseYear);
+        }
+
     }
 }
