@@ -444,4 +444,179 @@ public class AlbumServiceTests
 
         result.ShouldBeNull();
     }
+
+    [Test]
+    public void GetAlbumByAlbumName_ReturnsAlbum_WhenAlbumExists()
+    {
+        var album = new Album
+        {
+            Id = 1,
+            Title = "Thriller",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 10
+        };
+
+        _albumRepositoryMock
+            .Setup(repo => repo.GetAlbumByAlbumName("Thriller"))
+            .Returns(album);
+
+        var result = _albumService.GetAlbumByAlbumName("Thriller");
+
+        result.ShouldNotBeNull();
+        result.Title.ShouldBe("Thriller");
+    }
+
+    [Test]
+    public void GetAlbumByAlbumName_ReturnsNull_WhenAlbumDoesNotExist()
+    {
+        _albumRepositoryMock
+            .Setup(repo => repo.GetAlbumByAlbumName("Unknown"))
+            .Returns((Album)null);
+
+        var result = _albumService.GetAlbumByAlbumName("Unknown");
+
+        result.ShouldBeNull();
+    }
+
+    [Test]
+    public void GetAlbumByAlbumName_CallsRepository_Once()
+    {
+        _albumService.GetAlbumByAlbumName("Thriller");
+
+        _albumRepositoryMock.Verify(
+            repo => repo.GetAlbumByAlbumName("Thriller"),
+            Times.Once());
+    }
+
+    [Test]
+    public void GetAlbumsByArtist_ReturnsAlbums_WhenArtistExists()
+    {
+        List<Album> albums = new List<Album>
+    {
+        new Album { Id = 1, Title = "21", Artist = "Adele" },
+        new Album { Id = 2, Title = "25", Artist = "Adele" }
+    };
+
+        _albumRepositoryMock
+            .Setup(repo => repo.GetAlbumsByArtist("Adele"))
+            .Returns(albums);
+
+        var result = _albumService.GetAlbumsByArtist("Adele");
+
+        result.Count().ShouldBe(2);
+        result.All(a => a.Artist == "Adele").ShouldBeTrue();
+    }
+
+    [Test]
+    public void GetAlbumsByArtist_ReturnsEmptyList_WhenArtistDoesNotExist()
+    {
+        List<Album> emptyAlbums = new List<Album>();
+
+        _albumRepositoryMock
+            .Setup(repo => repo.GetAlbumsByArtist("Unknown"))
+            .Returns(emptyAlbums);
+
+        var result = _albumService.GetAlbumsByArtist("Unknown");
+
+        result.ShouldBeEmpty();
+    }
+
+    [Test]
+    public void GetAlbumsByArtist_CallsRepository_Once()
+    {
+        _albumService.GetAlbumsByArtist("Adele");
+
+        _albumRepositoryMock.Verify(
+            repo => repo.GetAlbumsByArtist("Adele"),
+            Times.Once());
+    }
+
+    [Test]
+    public void GetAlbumsByGenre_ReturnsAlbums_WhenGenreExists()
+    {
+        List<Album> albums = new List<Album>
+    {
+        new Album { Id = 1, Title = "Thriller", Genre = "Pop" },
+        new Album { Id = 2, Title = "Bad", Genre = "Pop" }
+    };
+
+        _albumRepositoryMock
+            .Setup(repo => repo.GetAlbumsByGenre("Pop"))
+            .Returns(albums);
+
+        var result = _albumService.GetAlbumsByGenre("Pop");
+
+        result.Count().ShouldBe(2);
+        result.All(a => a.Genre == "Pop").ShouldBeTrue();
+    }
+
+    [Test]
+    public void GetAlbumsByGenre_ReturnsEmptyList_WhenGenreDoesNotExist()
+    {
+        List<Album> emptyAlbums = new List<Album>();
+
+        _albumRepositoryMock
+            .Setup(repo => repo.GetAlbumsByGenre("Jazz"))
+            .Returns(emptyAlbums);
+
+        var result = _albumService.GetAlbumsByGenre("Jazz");
+
+        result.ShouldBeEmpty();
+    }
+
+    [Test]
+    public void GetAlbumsByGenre_CallsRepository_Once()
+    {
+        _albumService.GetAlbumsByGenre("Pop");
+
+        _albumRepositoryMock.Verify(
+            repo => repo.GetAlbumsByGenre("Pop"),
+            Times.Once());
+    }
+
+    [Test]
+    public void GetAlbumsByReleaseYear_ReturnsAlbums_WhenReleaseYearExists()
+    {
+        List<Album> albums = new List<Album>
+    {
+        new Album { Id = 1, Title = "Thriller", ReleaseYear = 1982 },
+        new Album { Id = 2, Title = "Album Two", ReleaseYear = 1982 }
+    };
+
+        _albumRepositoryMock
+            .Setup(repo => repo.GetAlbumsByReleaseYear(1982))
+            .Returns(albums);
+
+        var result = _albumService.GetAlbumsByReleaseYear(1982);
+
+        result.Count().ShouldBe(2);
+        result.All(a => a.ReleaseYear == 1982).ShouldBeTrue();
+    }
+
+    [Test]
+    public void GetAlbumsByReleaseYear_ReturnsEmptyList_WhenReleaseYearDoesNotExist()
+    {
+        List<Album> emptyAlbums = new List<Album>();
+
+        _albumRepositoryMock
+            .Setup(repo => repo.GetAlbumsByReleaseYear(2020))
+            .Returns(emptyAlbums);
+
+        var result = _albumService.GetAlbumsByReleaseYear(2020);
+
+        result.ShouldBeEmpty();
+    }
+
+    [Test]
+    public void GetAlbumsByReleaseYear_CallsRepository_Once()
+    {
+        _albumService.GetAlbumsByReleaseYear(1982);
+
+        _albumRepositoryMock.Verify(
+            repo => repo.GetAlbumsByReleaseYear(1982),
+            Times.Once());
+    }
 }

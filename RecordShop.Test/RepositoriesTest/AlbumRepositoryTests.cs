@@ -620,5 +620,334 @@ public class AlbumRepositoryTests
 
         result.ShouldBeNull();
     }
+
+    [Test]
+    public void GetAlbumByAlbumName_ReturnsAlbum_WhenAlbumNameExists()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.AddRange(
+            new Album 
+            { 
+                Id = 1, 
+                Title = "Thriller", 
+                Artist = "Michael Jackson", 
+                Genre = "Pop", 
+                ReleaseYear = 1982, 
+                Price = 9.99m, 
+                StockQuantity = 10 
+            },
+
+            new Album 
+            { 
+                Id = 2, 
+                Title = "21", 
+                Artist = "Adele", 
+                Genre = "Soul", 
+                ReleaseYear = 2011, 
+                Price = 10.99m, 
+                StockQuantity = 7 
+            }
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+
+        var result = repo.GetAlbumByAlbumName("21");
+
+        result.ShouldNotBeNull();
+        result.Title.ShouldBe("21");
+    }
+
+    [Test]
+    public void GetAlbumByAlbumName_ReturnsNull_WhenAlbumNameDoesNotExist()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.Add(
+            new Album 
+            { 
+                Id = 1, 
+                Title = "Thriller", 
+                Artist = "Michael Jackson", 
+                Genre = "Pop", 
+                ReleaseYear = 1982, 
+                Price = 9.99m, 
+                StockQuantity = 10 
+            }
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+
+        var result = repo.GetAlbumByAlbumName("Unknown Album");
+
+        result.ShouldBeNull();
+    }
+
+    [Test]
+    public void GetAlbumsByArtist_ReturnsMatchingAlbums_WhenArtistExists()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.AddRange(
+            new Album 
+            { 
+                Id = 1, 
+                Title = "21", 
+                Artist = "Adele", 
+                Genre = "Soul", 
+                ReleaseYear = 2011, 
+                Price = 10.99m, 
+                StockQuantity = 7 
+            },
+
+            new Album 
+            { 
+                Id = 2, 
+                Title = "25", 
+                Artist = "Adele", 
+                Genre = "Soul", 
+                ReleaseYear = 2015, 
+                Price = 11.99m, 
+                StockQuantity = 5 
+            },
+
+            new Album 
+            { 
+                Id = 3, 
+                Title = "Thriller", 
+                Artist = "Michael Jackson", 
+                Genre = "Pop", 
+                ReleaseYear = 1982, 
+                Price = 9.99m, 
+                StockQuantity = 10 
+            }
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+
+        var result = repo.GetAlbumsByArtist("Adele");
+
+        result.Count().ShouldBe(2);
+        result.All(a => a.Artist == "Adele").ShouldBeTrue();
+    }
+
+    [Test]
+    public void GetAlbumsByArtist_ReturnsEmptyList_WhenArtistDoesNotExist()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.Add(
+            new Album 
+            { 
+                Id = 1, 
+                Title = "Thriller", 
+                Artist = "Michael Jackson", 
+                Genre = "Pop", 
+                ReleaseYear = 1982, 
+                Price = 9.99m, 
+                StockQuantity = 10 
+            }
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+
+        var result = repo.GetAlbumsByArtist("Adele");
+
+        result.ShouldBeEmpty();
+    }
+
+    [Test]
+    public void GetAlbumsByGenre_ReturnsMatchingAlbums_WhenGenreExists()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.AddRange(
+            new Album 
+            { 
+                Id = 1, 
+                Title = "Thriller", 
+                Artist = "Michael Jackson", 
+                Genre = "Pop", 
+                ReleaseYear = 1982, 
+                Price = 9.99m, 
+                StockQuantity = 10 
+            },
+
+            new Album 
+            { 
+                Id = 2, 
+                Title = "Bad", 
+                Artist = "Michael Jackson", 
+                Genre = "Pop", 
+                ReleaseYear = 1987, 
+                Price = 8.99m, 
+                StockQuantity = 4 
+            },
+
+            new Album 
+            { 
+                Id = 3, 
+                Title = "Back in Black", 
+                Artist = "AC/DC", 
+                Genre = "Rock", 
+                ReleaseYear = 1980, 
+                Price = 8.99m, 
+                StockQuantity = 5 
+            }
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+
+        var result = repo.GetAlbumsByGenre("Pop");
+
+        result.Count().ShouldBe(2);
+        result.All(a => a.Genre == "Pop").ShouldBeTrue();
+    }
+
+    [Test]
+    public void GetAlbumsByGenre_ReturnsEmptyList_WhenGenreDoesNotExist()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.Add(
+            new Album 
+            { 
+                Id = 1, 
+                Title = "Thriller", 
+                Artist = "Michael Jackson", 
+                Genre = "Pop", 
+                ReleaseYear = 1982, 
+                Price = 9.99m, 
+                StockQuantity = 10 
+            }
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+
+        var result = repo.GetAlbumsByGenre("Jazz");
+
+        result.ShouldBeEmpty();
+    }
+
+    [Test]
+    public void GetAlbumsByReleaseYear_ReturnsMatchingAlbums_WhenReleaseYearExists()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.AddRange(
+            new Album 
+            { 
+                Id = 1, 
+                Title = "Thriller", 
+                Artist = "Michael Jackson", 
+                Genre = "Pop", 
+                ReleaseYear = 1982, 
+                Price = 9.99m, 
+                StockQuantity = 10 
+            },
+
+            new Album 
+            { 
+                Id = 2, 
+                Title = "Album Two", 
+                Artist = "Artist Two", 
+                Genre = "Pop", 
+                ReleaseYear = 1982, 
+                Price = 7.99m, 
+                StockQuantity = 3 
+            },
+
+            new Album 
+            { 
+                Id = 3, 
+                Title = "21", 
+                Artist = "Adele", 
+                Genre = "Soul", 
+                ReleaseYear = 2011, 
+                Price = 10.99m, 
+                StockQuantity = 7 
+            }
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+
+        var result = repo.GetAlbumsByReleaseYear(1982);
+
+        result.Count().ShouldBe(2);
+        result.All(a => a.ReleaseYear == 1982).ShouldBeTrue();
+    }
+
+    [Test]
+    public void GetAlbumsByReleaseYear_ReturnsEmptyList_WhenReleaseYearDoesNotExist()
+    {
+        var options = new DbContextOptionsBuilder<RecordShopDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new RecordShopDbContext(options);
+
+        context.Albums.Add(
+            new Album 
+            { 
+                Id = 1, 
+                Title = "Thriller", 
+                Artist = "Michael Jackson", 
+                Genre = "Pop", 
+                ReleaseYear = 1982, 
+                Price = 9.99m, 
+                StockQuantity = 10 
+            }
+        );
+
+        context.SaveChanges();
+
+        var repo = new AlbumRepository(context);
+
+        var result = repo.GetAlbumsByReleaseYear(2020);
+
+        result.ShouldBeEmpty();
+    }
 }
 

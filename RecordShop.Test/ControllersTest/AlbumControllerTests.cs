@@ -608,5 +608,254 @@ public class AlbumControllerTests
         _albumServiceMock.Verify(service => service.DeleteAlbum(It.IsAny<int>()), Times.Never());
         result.ShouldBeOfType<BadRequestResult>();
     }
+
+    [Test]
+    public void GetAlbumByAlbumName_ReturnsOk_WhenAlbumExists()
+    {
+        var album = new Album
+        {
+            Id = 1,
+            Title = "Thriller",
+            Artist = "Michael Jackson",
+            Genre = "Pop",
+            ReleaseYear = 1982,
+            Price = 9.99m,
+            StockQuantity = 10
+        };
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumByAlbumName("Thriller"))
+            .Returns(album);
+
+        var result = _albumController.GetAlbumByAlbumName("Thriller");
+
+        result.ShouldBeOfType<OkObjectResult>();
+    }
+
+    [Test]
+    public void GetAlbumByAlbumName_ReturnsAlbum_WhenAlbumExists()
+    {
+        var album = new Album
+        {
+            Id = 1,
+            Title = "Thriller",
+            Artist = "Michael Jackson"
+        };
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumByAlbumName("Thriller"))
+            .Returns(album);
+
+        var result = _albumController.GetAlbumByAlbumName("Thriller");
+
+        var okResult = result as OkObjectResult;
+        var returnedAlbum = okResult.Value as Album;
+
+        returnedAlbum.ShouldNotBeNull();
+        returnedAlbum.Title.ShouldBe("Thriller");
+    }
+
+    [Test]
+    public void GetAlbumByAlbumName_ReturnsBadRequest_WhenTitleIsEmpty()
+    {
+        var result = _albumController.GetAlbumByAlbumName("");
+
+        result.ShouldBeOfType<BadRequestResult>();
+    }
+
+    [Test]
+    public void GetAlbumByAlbumName_ReturnsNotFound_WhenAlbumDoesNotExist()
+    {
+        _albumServiceMock
+            .Setup(service => service.GetAlbumByAlbumName("Unknown"))
+            .Returns((Album)null);
+
+        var result = _albumController.GetAlbumByAlbumName("Unknown");
+
+        result.ShouldBeOfType<NotFoundResult>();
+    }
+
+    [Test]
+    public void GetAlbumsByArtist_ReturnsOk_WhenAlbumsExist()
+    {
+        List<Album> albums = new List<Album>
+    {
+        new Album { Id = 1, Title = "21", Artist = "Adele" },
+        new Album { Id = 2, Title = "25", Artist = "Adele" }
+    };
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumsByArtist("Adele"))
+            .Returns(albums);
+
+        var result = _albumController.GetAlbumsByArtist("Adele");
+
+        result.ShouldBeOfType<OkObjectResult>();
+    }
+
+    [Test]
+    public void GetAlbumsByArtist_ReturnsAlbums_WhenAlbumsExist()
+    {
+        List<Album> albums = new List<Album>
+    {
+        new Album { Id = 1, Title = "21", Artist = "Adele" },
+        new Album { Id = 2, Title = "25", Artist = "Adele" }
+    };
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumsByArtist("Adele"))
+            .Returns(albums);
+
+        var result = _albumController.GetAlbumsByArtist("Adele");
+
+        var okResult = result as OkObjectResult;
+        var returnedAlbums = okResult.Value as IEnumerable<Album>;
+
+        returnedAlbums.Count().ShouldBe(2);
+    }
+
+    [Test]
+    public void GetAlbumsByArtist_ReturnsBadRequest_WhenArtistNameIsEmpty()
+    {
+        var result = _albumController.GetAlbumsByArtist("");
+
+        result.ShouldBeOfType<BadRequestResult>();
+    }
+
+    [Test]
+    public void GetAlbumsByArtist_ReturnsNotFound_WhenArtistDoesNotExist()
+    {
+        List<Album> emptyAlbums = new List<Album>();
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumsByArtist("Unknown"))
+            .Returns(emptyAlbums);
+
+        var result = _albumController.GetAlbumsByArtist("Unknown");
+
+        result.ShouldBeOfType<NotFoundResult>();
+    }
+
+    [Test]
+    public void GetAlbumsByGenre_ReturnsOk_WhenAlbumsExist()
+    {
+        List<Album> albums = new List<Album>
+    {
+        new Album { Id = 1, Title = "Thriller", Genre = "Pop" },
+        new Album { Id = 2, Title = "Bad", Genre = "Pop" }
+    };
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumsByGenre("Pop"))
+            .Returns(albums);
+
+        var result = _albumController.GetAlbumsByGenre("Pop");
+
+        result.ShouldBeOfType<OkObjectResult>();
+    }
+
+    [Test]
+    public void GetAlbumsByGenre_ReturnsAlbums_WhenAlbumsExist()
+    {
+        List<Album> albums = new List<Album>
+    {
+        new Album { Id = 1, Title = "Thriller", Genre = "Pop" },
+        new Album { Id = 2, Title = "Bad", Genre = "Pop" }
+    };
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumsByGenre("Pop"))
+            .Returns(albums);
+
+        var result = _albumController.GetAlbumsByGenre("Pop");
+
+        var okResult = result as OkObjectResult;
+        var returnedAlbums = okResult.Value as IEnumerable<Album>;
+
+        returnedAlbums.Count().ShouldBe(2);
+    }
+
+    [Test]
+    public void GetAlbumsByGenre_ReturnsBadRequest_WhenGenreIsEmpty()
+    {
+        var result = _albumController.GetAlbumsByGenre("");
+
+        result.ShouldBeOfType<BadRequestResult>();
+    }
+
+    [Test]
+    public void GetAlbumsByGenre_ReturnsNotFound_WhenGenreDoesNotExist()
+    {
+        List<Album> emptyAlbums = new List<Album>();
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumsByGenre("Jazz"))
+            .Returns(emptyAlbums);
+
+        var result = _albumController.GetAlbumsByGenre("Jazz");
+
+        result.ShouldBeOfType<NotFoundResult>();
+    }
+
+    [Test]
+    public void GetAlbumsByReleaseYear_ReturnsOk_WhenAlbumsExist()
+    {
+        List<Album> albums = new List<Album>
+    {
+        new Album { Id = 1, Title = "Thriller", ReleaseYear = 1982 },
+        new Album { Id = 2, Title = "Album Two", ReleaseYear = 1982 }
+    };
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumsByReleaseYear(1982))
+            .Returns(albums);
+
+        var result = _albumController.GetAlbumsByReleaseYear(1982);
+
+        result.ShouldBeOfType<OkObjectResult>();
+    }
+
+    [Test]
+    public void GetAlbumsByReleaseYear_ReturnsAlbums_WhenAlbumsExist()
+    {
+        List<Album> albums = new List<Album>
+    {
+        new Album { Id = 1, Title = "Thriller", ReleaseYear = 1982 },
+        new Album { Id = 2, Title = "Album Two", ReleaseYear = 1982 }
+    };
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumsByReleaseYear(1982))
+            .Returns(albums);
+
+        var result = _albumController.GetAlbumsByReleaseYear(1982);
+
+        var okResult = result as OkObjectResult;
+        var returnedAlbums = okResult.Value as IEnumerable<Album>;
+
+        returnedAlbums.Count().ShouldBe(2);
+    }
+
+    [Test]
+    public void GetAlbumsByReleaseYear_ReturnsBadRequest_WhenReleaseYearIsInvalid()
+    {
+        var result = _albumController.GetAlbumsByReleaseYear(0);
+
+        result.ShouldBeOfType<BadRequestResult>();
+    }
+
+    [Test]
+    public void GetAlbumsByReleaseYear_ReturnsNotFound_WhenReleaseYearDoesNotExist()
+    {
+        List<Album> emptyAlbums = new List<Album>();
+
+        _albumServiceMock
+            .Setup(service => service.GetAlbumsByReleaseYear(2020))
+            .Returns(emptyAlbums);
+
+        var result = _albumController.GetAlbumsByReleaseYear(2020);
+
+        result.ShouldBeOfType<NotFoundResult>();
+    }
 }
 
