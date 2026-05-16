@@ -1,8 +1,10 @@
 
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using RecordShop.Data;
 using RecordShop.Repositories;
 using RecordShop.Services;
+using RecordShop.HealthChecks;
 
 namespace RecordShop
 {
@@ -20,6 +22,8 @@ namespace RecordShop
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddHealthChecks().AddCheck<ApiHealthCheck>("api_health_check",
+                failureStatus: HealthStatus.Unhealthy, tags: new[] { "api", "albums" });
 
             if (builder.Configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
@@ -46,6 +50,7 @@ namespace RecordShop
 
             app.UseAuthorization();
 
+            app.MapHealthChecks("/health");
 
             app.MapControllers();
 
