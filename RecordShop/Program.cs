@@ -23,7 +23,9 @@ namespace RecordShop
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddHealthChecks().AddCheck<ApiHealthCheck>("api_health_check",
-                failureStatus: HealthStatus.Unhealthy, tags: new[] { "api", "albums" });
+                failureStatus: HealthStatus.Unhealthy, tags: new[] { "api", "albums" })
+                .AddCheck<DatabaseHealthCheck>("database_health_check",
+                failureStatus: HealthStatus.Unhealthy, tags: new[] { "database", "sql" });
 
             if (builder.Configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
